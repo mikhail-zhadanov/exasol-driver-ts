@@ -62,7 +62,7 @@
   "types": "dist/index.d.ts",
   "imports": {
     "#crypto/rsa": {
-      "types": "./src/lib/crypto/rsa.node.ts",
+      "types": "./dist/crypto/rsa.node.d.ts",
       "browser": "./dist/crypto/rsa.browser.js",
       "node": "./dist/crypto/rsa.node.js",
       "default": "./dist/crypto/rsa.node.js"
