@@ -1,4 +1,4 @@
-import { constants as cryptoConstants, createPublicKey, publicEncrypt } from 'node:crypto';
+import { encryptPasswordPkcs1v15 } from '#crypto/rsa';
 
 import { getURIScheme } from './utils';
 import { CreatePreparedStatementResponse, PublicKeyResponse, SQLQueriesResponse, SQLResponse } from './types';
@@ -427,28 +427,19 @@ export class ExasolDriver implements IExasolDriver {
         return Promise.reject(new Error(errorString));
       }
 
-      // Build RSA public key from hex modulus/exponent returned by the server, then
-      // encrypt the password with RSAES-PKCS1-v1.5 and base64-encode the ciphertext.
-      // This replaces node-forge with Node's built-in crypto to shrink bundle size.
-      const padHex = (hex: string) => (hex.length % 2 === 0 ? hex : '0' + hex);
-      const modulus = Buffer.from(padHex(response.responseData.publicKeyModulus), 'hex');
-      const exponent = Buffer.from(padHex(response.responseData.publicKeyExponent), 'hex');
-      const pubKey = createPublicKey({
-        key: {
-          kty: 'RSA',
-          n: modulus.toString('base64url'),
-          e: exponent.toString('base64url'),
-        },
-        format: 'jwk',
-      });
-      const ciphertext = publicEncrypt(
-        { key: pubKey, padding: cryptoConstants.RSA_PKCS1_PADDING },
-        Buffer.from(this.config.password ?? '', 'binary'),
+      // Encrypt the password under RSAES-PKCS1-v1.5 using the server's
+      // public key. The actual implementation is resolved per environment
+      // via the package `imports` map: node:crypto in Node, jsencrypt in
+      // browsers (Web Crypto does not implement PKCS#1 v1.5).
+      const encryptedPassword = encryptPasswordPkcs1v15(
+        this.config.password ?? '',
+        response.responseData.publicKeyModulus,
+        response.responseData.publicKeyExponent,
       );
 
       return this.sendCommand({
         username: this.config.user ?? '',
-        password: ciphertext.toString('base64'),
+        password: encryptedPassword,
         useCompression: this.config.compression,
         clientName: this.config.clientName,
         driverName: `exasol-driver-js ${driverVersion}`,

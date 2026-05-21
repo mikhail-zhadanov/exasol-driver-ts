@@ -6,6 +6,9 @@ const config: Config = {
       displayName: 'unit-dom',
       testEnvironment: 'jsdom',
       testMatch: ['<rootDir>/src/**/*.spec.ts', '<rootDir>/src/**/*.spec.dom.ts'],
+      moduleNameMapper: {
+        '^#crypto/rsa$': '<rootDir>/src/lib/crypto/rsa.browser.ts',
+      },
       transform: {
         '^.+\\.[tj]s$': [
           'ts-jest',
@@ -21,6 +24,9 @@ const config: Config = {
       displayName: 'unit-node',
       testEnvironment: 'node',
       testMatch: ['<rootDir>/src/**/*.spec.ts', '<rootDir>/src/**/*.spec.node.ts'],
+      moduleNameMapper: {
+        '^#crypto/rsa$': '<rootDir>/src/lib/crypto/rsa.node.ts',
+      },
       transform: {
         '^.+\\.[tj]s$': [
           'ts-jest',

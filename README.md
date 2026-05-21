@@ -24,6 +24,10 @@ Check out the [user guide](doc/user_guide/user_guide.md) for more details.
 1. Connect to an [Exasol](https://www.exasol.com/) database and execute SQL queries and commands
 1. Encrypted communication via TLS
 
+### Crypto backends
+
+Login uses RSA-PKCS1-v1.5, which Web Crypto does not implement. The driver resolves the crypto backend per environment via the package `imports` map: `node:crypto` in Node, [`jsencrypt`](https://www.npmjs.com/package/jsencrypt) in browsers. No consumer configuration is required; Node, esbuild, Rollup, Vite, and webpack 5 all honor the map.
+
 ## Information for Users
 
 - [User Guide](doc/user_guide/user_guide.md)

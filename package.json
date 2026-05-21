@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "generic-pool": "^3.9.0",
+    "jsencrypt": "^3.5.4",
     "pako": "^2.1.0"
   },
   "devDependencies": {
@@ -59,6 +60,14 @@
     "dist"
   ],
   "types": "dist/index.d.ts",
+  "imports": {
+    "#crypto/rsa": {
+      "types": "./src/lib/crypto/rsa.node.ts",
+      "browser": "./dist/crypto/rsa.browser.js",
+      "node": "./dist/crypto/rsa.node.js",
+      "default": "./dist/crypto/rsa.node.js"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/exasol/exasol-driver-ts"
